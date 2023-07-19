@@ -28,7 +28,7 @@ setuptools.setup(
         "pillow>=7.1",
         "requests>=2.24",
         "selenium>=3.141",
-        "soupsieve>=2.0"
+        "soupsieve>=2.0",
         "tld",
         "urllib3",
         "prodict>=0.8"
