@@ -25,7 +25,8 @@ import os.path
 from pathlib import Path
 from typing import Iterable
 
-from selenium import webdriver
+# from selenium import webdriver
+import undetected_chromedriver as webdriver
 from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -79,6 +80,7 @@ def _setup_chrome(config: Config, profile_path: Path = None) -> WebDriver:
             "prefs", {"download.default_directory": os.path.expanduser(config.scraping.temp_path)}
         )
 
+    """
     if "pixelRatio" in browser and browser.pixelRatio != 0:
         # Emulating a mobile device - the full set of parameters must be provided
         chrome_options.add_experimental_option(
@@ -91,6 +93,7 @@ def _setup_chrome(config: Config, profile_path: Path = None) -> WebDriver:
     else:
         if "useragent" in browser:
             chrome_options.add_argument(f'--user-agent="{browser.useragent}"')
+    """
 
     if "width" in browser and "height" in browser:
         chrome_options.add_argument(f"--window-size={browser.width},{browser.height + 120}")
