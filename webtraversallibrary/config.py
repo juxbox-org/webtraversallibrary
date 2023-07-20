@@ -55,6 +55,7 @@ class Config:
             ("scraping.mhtml_timeout", int),
             ("scraping.history", bool),
             ("scraping.full_history", bool),
+            ("scraping.blacklist", List),
             ("scrolling.max_page_height", int),
             ("browser.browser", str),
             ("browser.useragent", str),

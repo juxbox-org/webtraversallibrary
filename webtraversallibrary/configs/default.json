@@ -19,7 +19,8 @@
     "save_mhtml": false,
     "temp_path": "~/.webtraversallibrary/",
     "history": true,
-    "full_history": true
+    "full_history": true,
+    "blacklist": []
   },
   "scrolling": {
     "max_page_height": 2000

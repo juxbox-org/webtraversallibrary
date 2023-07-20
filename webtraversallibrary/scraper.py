@@ -62,6 +62,22 @@ class Scraper:
         """
         Scrape the page currently open in the driver,
         """
+
+        """
+        Remove elements from the page that are on the blacklist.
+        """
+        if self.config.scraping.blacklist is not None and len(self.config.scraping.blacklist) > 0:
+            for tag in self.config.scraping.blacklist:
+                try:
+                    elements = self.driver.find_elements(By.TAG_NAME, tag)
+                    for element in elements:
+                        self.driver.execute_script( \
+                                """var element = arguments[0]; element.parentNode.removeChild(element);""", element)
+                        logger.info("Removed element with tag name: " + tag)
+                except Exception as e:
+                    logger.error(e)
+                    pass
+
         attempts = self.config.scraping.attempts
         if attempts < 1:
             logger.warning("config.scraping.attempts is set to 0, no snapshot will be made!")
