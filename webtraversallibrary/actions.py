@@ -25,6 +25,7 @@ the missing attributes to replace those.
 
 from __future__ import annotations
 
+import logging
 from abc import ABC
 from dataclasses import dataclass, replace
 from time import sleep
@@ -34,7 +35,8 @@ from .color import Color
 from .geometry import Point
 from .selector import Selector
 from .snapshot import Elements, PageElement
-
+from selenium.webdriver.support.ui import Select as WebDriverSelect
+from selenium.webdriver.common.by import By
 
 @dataclass(frozen=True)
 class Action(ABC):
@@ -197,13 +199,25 @@ class Select(ElementAction):
     """
     Selects the given value on a <select> dropdown element.
     If it isn't a select element, anything can happen.
+    It is the <option> element that the action is attached to.
+    The select is then triggered on the parent of the <option>.
     """
 
     value: str = ""
 
+    # Modified to use Selenium directly, as the JS method doesn't work on all sites
     def execute(self, workflow):
         with workflow.frame(self.selector.iframe):
-            workflow.js.select(self.selector, self.value)
+            try:
+                dropdown = WebDriverSelect(workflow.driver.find_element(By.XPATH, self.target.parent.selector.xpath))
+                dropdown.select_by_visible_text(self.target.metadata["text"])
+            except Exception as e:
+                logging.error(e)
+                logging.warning("Failed to select dropdown")
+                logging.warning("Select xpath: " + self.target.parent.selector.xpath)
+                logging.warning("For option with text: " + self.target.metadata["text"])
+
+                pass
 
 
 @dataclass(frozen=True)
