@@ -31,7 +31,8 @@ setuptools.setup(
         "soupsieve>=2.0",
         "tld",
         "urllib3",
-        "prodict>=0.8"
+        "prodict>=0.8",
+        "undetected-chromedriver>=3.4"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.7",
