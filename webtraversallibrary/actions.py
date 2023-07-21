@@ -38,6 +38,9 @@ from .snapshot import Elements, PageElement
 from selenium.webdriver.support.ui import Select as WebDriverSelect
 from selenium.webdriver.common.by import By
 
+logger = logging.getLogger("wtl")
+
+
 @dataclass(frozen=True)
 class Action(ABC):
     """
@@ -212,10 +215,10 @@ class Select(ElementAction):
                 dropdown = WebDriverSelect(workflow.driver.find_element(By.XPATH, self.target.parent.selector.xpath))
                 dropdown.select_by_visible_text(self.target.metadata["text"])
             except Exception as e:
-                logging.error(e)
-                logging.warning("Failed to select dropdown")
-                logging.warning("Select xpath: " + self.target.parent.selector.xpath)
-                logging.warning("For option with text: " + self.target.metadata["text"])
+                logger.error(e)
+                logger.warning("Failed to select dropdown")
+                logger.warning("Select xpath: " + self.target.parent.selector.xpath)
+                logger.warning("For option with text: " + self.target.metadata["text"])
 
                 pass
 

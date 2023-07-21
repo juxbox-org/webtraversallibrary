@@ -20,6 +20,8 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Set
 
 from selenium.common.exceptions import JavascriptException, UnexpectedAlertPresentException, WebDriverException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
 
 from .config import Config
 from .error import WindowClosedError
@@ -47,6 +49,8 @@ class Window:
         self.closed: Set[str] = set()
         self.current: str = None
         self.tab_navigation: Dict[str, str] = {}
+        self.iframes: Dict[str, WebElement] = {}
+        self.iframeXpaths: Dict[str, str] = {}
 
     def ensure_running(self):
         """
@@ -103,7 +107,7 @@ class Window:
         for cookie in value:
             self.driver.add_cookie(cookie)
 
-    def create_tab(self, name: str, url: str = "about:blank"):
+    def create_tab(self, name: str, url: str = "about:blank", iframeXpath: str = None):
         """
         Open a new tab with a given `name` (must be unique for this Window).
         If `url` argument is given, saves this value that can be retrieved using the
@@ -126,6 +130,11 @@ class Window:
         if url != "about:blank":
             self.tab_navigation[name] = url
 
+        # Initialize data for an iframe if provided
+        if iframeXpath is not None:
+            self.iframeXpaths[name] = iframeXpath
+            self.iframes[name] = None
+
     def set_tab(self, name: str):
         """
         Sets the current active tab to the one listed under the given `name`.
@@ -141,6 +150,17 @@ class Window:
             logger.warning("This tab has been closed. Do not interact with it.")
         else:
             self.driver.switch_to.window(self.name_to_handle[name])
+
+            # Switch to iframe if necessary
+            try:
+                if name in self.iframes:
+                    if self.iframes[name] is None:
+                        self.iframes[name] = self.driver.find_element(By.XPATH, self.iframeXpaths[name])
+
+                    self.driver.switch_to.frame(self.iframes[name])
+            except Exception as e:
+                logger.warning(f"Could not switch to iframe with xpath: {self.iframeXpaths[name]}")
+                logger.error(e)
 
     def close_tab(self):
         """Closes the current active tab."""

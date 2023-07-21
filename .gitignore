@@ -30,3 +30,4 @@ node_modules/
 /*.egg-info
 
 .kai-build/auto
+add-git-tag.sh
