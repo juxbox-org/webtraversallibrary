@@ -248,12 +248,14 @@ class Workflow:
         return all_views
 
     def _get_new_view(self, name: str, initial_action: Action) -> View:
+        context = self.current_window.set_context_for_tab(name)
+
         # Run postload callbacks
         for cb in self.current_window.scraper.postload_callbacks:
             cb()
 
         # Scrape the page
-        snapshot = self.current_window.scraper.scrape_current_page()
+        snapshot = self.current_window.scraper.scrape_current_page(context)
 
         # Assemble basic list of actions
         action_list: List[Action] = [Abort(), Refresh(), Navigate(), Wait()]
@@ -462,12 +464,12 @@ class Workflow:
         for window in self.windows:
             window.quit()
 
-    def frame(self, identifier: str) -> FrameSwitcher:
+    def frame(self, xpath: str) -> FrameSwitcher:
         """
         Returns a context manager for entering and exiting iframes.
         See `FrameSwitcher` for more details.
         """
-        return FrameSwitcher(identifier, self.js, self.driver)
+        return FrameSwitcher(xpath, self.js, self.driver)
 
     def _perform_action(self, action: Action):
         if not action:

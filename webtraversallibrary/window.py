@@ -135,6 +135,26 @@ class Window:
             self.iframeXpaths[name] = iframeXpath
             self.iframes[name] = None
 
+    def set_context_for_tab(self, name: str):
+        if name in self.iframes:
+            try:
+                if self.iframeXpaths[name] is not None:
+                    if self.iframes[name] is None:
+                        self.iframes[name] = self.driver.find_element(By.XPATH, self.iframeXpaths[name])
+
+                    self.driver.switch_to.frame(self.iframes[name])
+
+                    return self.iframeXpaths[name]
+            except Exception as e:
+                logger.warning(f"Could not switch to iframe with xpath: {self.iframeXpaths[name]}")
+                logger.error(e)
+                del self.iframes[name]
+                self.driver.switch_to.default_content()
+        else:
+            self.driver.switch_to.default_content()
+
+        return None
+
     def set_tab(self, name: str):
         """
         Sets the current active tab to the one listed under the given `name`.
@@ -151,27 +171,18 @@ class Window:
         else:
             self.driver.switch_to.window(self.name_to_handle[name])
 
-            # Switch to iframe if necessary
-            try:
-                if name in self.iframes:
-                    if self.iframes[name] is None:
-                        self.iframes[name] = self.driver.find_element(By.XPATH, self.iframeXpaths[name])
-
-                    self.driver.switch_to.frame(self.iframes[name])
-            except Exception as e:
-                logger.warning(f"Could not switch to iframe with xpath: {self.iframeXpaths[name]}")
-                logger.error(e)
-
-    def close_tab(self):
+    def close_tab(self, closeDriver = True):
         """Closes the current active tab."""
         assert self.current not in self.closed, "Closing already closed tab!"
         self.closed.add(self.current)
-        try:
-            self.driver.close()
-        except (UnexpectedAlertPresentException, JavascriptException, WebDriverException, WindowClosedError):
-            logger.warning("Attempting to close failed - window probably already closed.")
 
-    def quit(self):
+        if closeDriver:
+            try:
+                self.driver.close()
+            except (UnexpectedAlertPresentException, JavascriptException, WebDriverException, WindowClosedError):
+                logger.warning("Attempting to close failed - window probably already closed.")
+
+    def quit(self, closeDriver = True):
         """
         Terminates the browser and associated driver of this instance.
         Do not use this window afterwards.
@@ -183,7 +194,8 @@ class Window:
             for tab in self.open_tabs:
                 self.set_tab(tab)
                 self.close_tab()
-            self._driver.quit()
+            if closeDriver:
+                self._driver.quit()
         except WindowClosedError:
             logger.warning("Attempting to close already closed window.")
         finally:

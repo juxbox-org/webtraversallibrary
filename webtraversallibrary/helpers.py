@@ -24,6 +24,7 @@ from collections.abc import Collection
 from typing import Any, Dict, Iterable, Union
 
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 from .classifiers import Classifier, ElementClassifier, ViewClassifier
 from .error import ElementNotFoundError
@@ -112,27 +113,27 @@ class FrameSwitcher:
     Raises ElementNotFoundError if an iframe could not be found.
     """
 
-    def __init__(self, identifier: str, js: JavascriptWrapper, driver: webdriver):
-        self.name = None
+    def __init__(self, xpath: str, js: JavascriptWrapper, driver: webdriver):
+        self.iframe = None
         self.driver = driver
 
-        if identifier:
-            self.name = js.find_iframe_name(identifier)
-            if not self.name:
-                raise ElementNotFoundError(f"Found no iframe with identifier '{identifier}'")
+        if xpath:
+            self.iframe = self.driver.find_element(By.XPATH, xpath)
+            if not self.iframe:
+                raise ElementNotFoundError(f"Found no iframe with xpath '{xpath}'")
 
     def __enter__(self):
         """
-        Goes into an <iframe> object with given name.
+        Goes into an <iframe> object with given iframe.
         """
-        if self.name:
-            logger.debug(f"Entering iframe: '{self.name}'")
-            self.driver.switch_to.frame(self.name)
+        if self.iframe:
+            logger.debug(f"Entering iframe: '{self.iframe}'")
+            self.driver.switch_to.frame(self.iframe)
 
     def __exit__(self, *_):
         """
         Steps out into the parent frame.
         """
-        if self.name:
-            logger.debug(f"Exiting iframe: '{self.name}'")
+        if self.iframe:
+            logger.debug(f"Exiting iframe: '{self.iframe}'")
             self.driver.switch_to.default_content()

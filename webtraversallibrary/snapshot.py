@@ -50,6 +50,7 @@ class PageElement:
 
     page: "PageSnapshot" = field(repr=False)
     metadata: dict = field(repr=False)
+    iframe_xpath: str = None
 
     @property
     def raw_scores(self) -> Dict[str, float]:
@@ -101,7 +102,7 @@ class PageElement:
     @cached_property
     def selector(self) -> Selector:
         """CSS Selector for the element without attributes."""
-        return Selector.build(self.page.page_source, self.wtl_uid)
+        return Selector.build(self.page.page_source, self.wtl_uid, iframe = self.iframe_xpath)
 
     @cached_property
     def font_size(self) -> float:
@@ -235,9 +236,10 @@ class PageSnapshot:
     elements: Elements = field(init=False)
     screenshots: Dict[str, Screenshot] = field(default_factory=dict)
     mhtml_source: bytes = None
+    iframe_xpath: str = None
 
     def __post_init__(self):
-        page_elements = Elements([PageElement(self, metadata) for metadata in self.elements_metadata])
+        page_elements = Elements([PageElement(self, metadata, self.iframe_xpath) for metadata in self.elements_metadata])
         object.__setattr__(self, "elements", page_elements)
 
         if "screenshots" not in self.page_metadata:

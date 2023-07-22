@@ -50,7 +50,7 @@ class Selector:
         return len(self.css) < len(other.css)
 
     @classmethod
-    def build(cls, bs4_soup: bs4.BeautifulSoup, target: Union[bs4.Tag, int]) -> Selector:
+    def build(cls, bs4_soup: bs4.BeautifulSoup, target: Union[bs4.Tag, int], iframe: str = None) -> Selector:
         """
         Compute xpath and css of a ``target`` in a bs4.BeautifulSoup.
         Will be verbose. Use a separate generalizer if you want reusable selectors.
@@ -82,7 +82,7 @@ class Selector:
 
         css = ">".join(reversed(css_components)).strip()
         xpath = "/" + "/".join(reversed(xpath_components)).strip()
-        return Selector(css=css, xpath=xpath)
+        return Selector(css=css, xpath=xpath, iframe = iframe)
 
     @classmethod
     def _safe_tag_name(cls, name: str) -> str:

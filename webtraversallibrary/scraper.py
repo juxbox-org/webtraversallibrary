@@ -58,7 +58,7 @@ class Scraper:
         self.postload_callbacks = postload_callbacks
         self.device_pixel_ratio = self.js.execute_script("return window.devicePixelRatio;") or 1.0
 
-    def scrape_current_page(self) -> PageSnapshot:
+    def scrape_current_page(self, iframe_xpath = None) -> PageSnapshot:
         """
         Scrape the page currently open in the driver,
         """
@@ -86,7 +86,7 @@ class Scraper:
         while attempts > 0:
             try:
                 attempts -= 1
-                snapshot = self._create_snapshot()
+                snapshot = self._create_snapshot(iframe_xpath)
                 break
             except WebDriverException as e:
                 logger.error(e)
@@ -205,7 +205,7 @@ class Scraper:
         with open(folder / filename, "rb") as f:
             return f.read()
 
-    def _create_snapshot(self) -> PageSnapshot:
+    def _create_snapshot(self, iframe_xpath) -> PageSnapshot:
         before = datetime.now()
 
         logger.debug(f"Page title: {self.driver.title}")
@@ -254,6 +254,7 @@ class Scraper:
             elements_metadata=elements_metadata,
             screenshots=screenshots,
             mhtml_source=mhtml_source,
+            iframe_xpath=iframe_xpath,
         )
 
         return snapshot
