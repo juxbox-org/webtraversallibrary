@@ -29,6 +29,7 @@ from .javascript import JavascriptWrapper
 from .logging_utils import logging
 from .scraper import Scraper
 from .webdrivers import setup_driver
+from .helpers import set_iframe_visibility
 
 logger = logging.getLogger("wtl")
 
@@ -141,6 +142,7 @@ class Window:
                 if self.iframeXpaths[name] is not None:
                     if self.iframes[name] is None:
                         self.iframes[name] = self.driver.find_element(By.XPATH, self.iframeXpaths[name])
+                        set_iframe_visibility(self.iframes[name], self.driver)
 
                     self.driver.switch_to.frame(self.iframes[name])
 

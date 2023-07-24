@@ -4,6 +4,12 @@
 # regarding copyright ownership.  The ASF licenses this file
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
 
 #   http://www.apache.org/licenses/LICENSE-2.0
@@ -137,3 +143,24 @@ class FrameSwitcher:
         if self.iframe:
             logger.debug(f"Exiting iframe: '{self.iframe}'")
             self.driver.switch_to.default_content()
+
+"""
+Even though an iframe is detected as present in the DOM, it may not be visible.
+If it is not visible, we find the first visible parent element and modify it's child
+element's style attribute to make the child element visible; this assumes that the
+child element's style is the one that is hiding the iframe.
+"""
+def set_iframe_visibility(iframe, driver):
+    if not iframe.is_displayed():
+        currEl = iframe
+        parentEl = currEl.find_element(By.XPATH, "..")
+
+        while not parentEl.is_displayed() and parentEl.tag_name != "body":
+            currEl = parentEl
+            parentEl = currEl.find_element(By.XPATH, "..")
+
+        if parentEl.tag_name == "body":
+            raise Exception("Could not find a visible parent element for the iframe!")
+        else:
+            driver.execute_script("arguments[0].setAttribute('style', 'visibility: visible; display: block');", currEl)
+
