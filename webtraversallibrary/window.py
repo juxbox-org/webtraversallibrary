@@ -135,7 +135,7 @@ class Window:
             self.iframeXpaths[name] = iframeXpath
             self.iframes[name] = None
 
-    def set_context_for_tab(self, name: str):
+    def set_content_for_tab(self, name: str):
         if name in self.iframes:
             try:
                 if self.iframeXpaths[name] is not None:

@@ -30,6 +30,7 @@ from abc import ABC
 from dataclasses import dataclass, replace
 from time import sleep
 from typing import Union
+from random import randint
 
 from .color import Color
 from .geometry import Point
@@ -256,6 +257,24 @@ class Remove(ElementAction):
     def execute(self, workflow):
         workflow.js.delete_element(self.selector)
 
+@dataclass(frozen=True)
+class AddIframe(ElementAction):
+    name: str = None
+    url: str = None
+
+    def __post_init__(self):
+        url = self.target.page.page_metadata["url"]
+        name = self.target.metadata["attributes"]["src"]
+        object.__setattr__(self, "name", name + "_" + str(randint(0, 10000)))
+        object.__setattr__(self, "url", url)
+
+    def execute(self, workflow):
+        try:
+            window = workflow.create_window(self.name + "-window")
+            window.create_tab(self.name, self.url, self.selector.xpath)
+        except Exception as e:
+            logger.warning(f"Error creating iframe: {self.name}")
+            logger.error(e)
 
 @dataclass(frozen=True)
 class Annotate(PageAction):

@@ -248,14 +248,14 @@ class Workflow:
         return all_views
 
     def _get_new_view(self, name: str, initial_action: Action) -> View:
-        context = self.current_window.set_context_for_tab(name)
+        iframe_xpath = self.current_window.set_content_for_tab(name)
 
         # Run postload callbacks
         for cb in self.current_window.scraper.postload_callbacks:
             cb()
 
         # Scrape the page
-        snapshot = self.current_window.scraper.scrape_current_page(context)
+        snapshot = self.current_window.scraper.scrape_current_page(iframe_xpath)
 
         # Assemble basic list of actions
         action_list: List[Action] = [Abort(), Refresh(), Navigate(), Wait()]
