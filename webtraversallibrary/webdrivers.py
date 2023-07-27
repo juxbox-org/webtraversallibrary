@@ -80,6 +80,9 @@ def _setup_chrome(config: Config, profile_path: Path = None) -> WebDriver:
             "prefs", {"download.default_directory": os.path.expanduser(config.scraping.temp_path)}
         )
 
+    if browser.disable_images:
+        chrome_options.add_argument("--blink-settings=imagesEnabled=false")
+
     """
     if "pixelRatio" in browser and browser.pixelRatio != 0:
         # Emulating a mobile device - the full set of parameters must be provided

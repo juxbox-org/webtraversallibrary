@@ -33,7 +33,8 @@
     "pixelRatio": 3,
     "headless": false,
     "enable_mhtml": false,
-    "proxy": ""
+    "proxy": "",
+    "disable_images": false
   },
   "javascript": {
     "info": "debug",
