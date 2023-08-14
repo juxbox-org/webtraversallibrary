@@ -34,7 +34,8 @@
     "headless": false,
     "enable_mhtml": false,
     "proxy": "",
-    "disable_images": false
+    "disable_images": false,
+    "language": ""
   },
   "javascript": {
     "info": "debug",
