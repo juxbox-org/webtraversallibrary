@@ -61,6 +61,10 @@ def _setup_chrome(config: Config, profile_path: Path = None) -> WebDriver:
     chrome_options.add_argument("--hide-scrollbars")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
+    # Set browser language to English
+    if browser.language:
+        chrome_options.add_argument("--lang={browser.language}")
+
     chrome_options.headless = browser.headless
 
     if profile_path:

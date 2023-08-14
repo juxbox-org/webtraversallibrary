@@ -64,6 +64,7 @@ class Config:
             ("browser.headless", bool),
             ("browser.enable_mhtml", bool),
             ("browser.disable_images", bool),
+            ("browser.language", str),
             ("browser.proxy", str),
             ("javascript.info", str),
             ("javascript.warning", str),
