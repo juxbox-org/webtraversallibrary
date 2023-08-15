@@ -18,6 +18,7 @@
 """
 Module for different webdrivers considered.
 """
+import re
 import importlib.resources
 import json
 import logging
@@ -31,7 +32,7 @@ from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from .config import Config
-from .driver_check import Drivers, is_driver_installed, log_driver_version
+from .driver_check import Drivers, is_driver_installed, log_driver_version, get_driver_location, get_driver_version
 from .error import WebDriverSendError
 
 logger = logging.getLogger("wtl")
@@ -114,7 +115,10 @@ def _setup_chrome(config: Config, profile_path: Path = None) -> WebDriver:
     WebDriver.add_script = _add_script
 
     # launch Chrome
-    driver = webdriver.Chrome(options=chrome_options, desired_capabilities=capabilities)
+    driver_location = get_driver_location(Drivers.CHROMEDRIVER)
+    driver_version = int(re.search(r'ChromeDriver\s+([0-9]+)\..*', get_driver_version(Drivers.CHROMEDRIVER)).group(1))
+    driver = webdriver.Chrome(options=chrome_options, desired_capabilities=capabilities, \
+        driver_executable_path=driver_location, version_main=driver_version)
 
     return driver
 
