@@ -119,6 +119,7 @@ def _setup_chrome(config: Config, profile_path: Path = None) -> WebDriver:
     driver_version = int(re.search(r'ChromeDriver\s+([0-9]+)\..*', get_driver_version(Drivers.CHROMEDRIVER)).group(1))
     driver = webdriver.Chrome(options=chrome_options, desired_capabilities=capabilities, \
         driver_executable_path=driver_location, version_main=driver_version)
+    driver.set_script_timeout(120) # 2 minutes
 
     return driver
 
