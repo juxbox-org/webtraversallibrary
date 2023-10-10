@@ -291,17 +291,23 @@ class PageSnapshot:
 
         return snapshot
 
-    def save(self, path: Path):
+    def save(self, path: Path, other: Optional[dict] = None):
         """
         Saves the current PageSnapshot instance to a folder.
         The number of files depends on whether screenshots were taken or not.
         """
         os.makedirs(path, exist_ok=True)
 
+        final_metadata = {}
+        final_metadata.update(self.page_metadata)
+
+        if other:
+            final_metadata.update(other)
+
         with open(path / "source.html", "w", encoding="utf8") as f:
             f.write(str(self.page_source))
         with open(path / "page_metadata.json", "w", encoding="utf8") as f:
-            json.dump(self.page_metadata, f)
+            json.dump(final_metadata, f)
         with open(path / "elements_metadata.json", "w", encoding="utf8") as f:
             json.dump(self.elements_metadata, f)
         for scr in self.screenshots.values():
