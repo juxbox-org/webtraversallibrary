@@ -225,6 +225,41 @@ class Select(ElementAction):
 
 
 @dataclass(frozen=True)
+class SelectFramework(ElementAction):
+    """
+    Selects the given value on a framework specific dropdown element
+    (e.g. Angular, React, etc.). Often these frameworks will use JS to
+    load and show the options, so we need to use a different method to
+    select the option than the standard Select action.
+    """
+
+    value: str = "" # The value to select
+    optionTag: str = "" # The framework tag used to specify options
+
+    def set_option_tag(self, optionTag):
+        object.__setattr__(self, "optionTag", optionTag)
+
+    def set_value(self, value):
+        object.__setattr__(self, "value", value)
+
+    def execute(self, workflow):
+        with workflow.frame(self.selector.iframe):
+            workflow.js.click_element(self.selector)
+            sleep(1) # Give the options a chance to load in case they are asynchronous
+            optionEls = workflow.driver.find_elements(By.TAG_NAME, self.optionTag)
+            for optionEl in optionEls:
+                if self.value.lower() in optionEl.text.lower():
+                    optionEl.click()
+                    break
+            """
+            Click somewhere else on the page to ensure the dropdown gets closed;
+            otherwise, it may interfere with future actions.
+            """
+            bodyEl = workflow.driver.find_element(By.TAG_NAME, 'body')
+            bodyEl.click()
+
+
+@dataclass(frozen=True)
 class ScrollTo(ElementAction):
     """
     Scrolls the current page to center the given element vertically.
