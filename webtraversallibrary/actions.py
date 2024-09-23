@@ -247,10 +247,20 @@ class SelectFramework(ElementAction):
             workflow.js.click_element(self.selector)
             sleep(1) # Give the options a chance to load in case they are asynchronous
             optionEls = workflow.driver.find_elements(By.TAG_NAME, self.optionTag)
+            targetEl = None
             for optionEl in optionEls:
                 if self.value.lower() in optionEl.text.lower():
-                    optionEl.click()
-                    break
+                    """
+                    In the event of multiple matches, select the shortest option text.
+                    """
+                    if not targetEl:
+                        targetEl = optionEl
+                    elif len(optionEl.text) < len(targetEl.text):
+                        targetEl = optionEl
+
+            if targetEl:
+                targetEl.click()
+
             """
             Click somewhere else on the page to ensure the dropdown gets closed;
             otherwise, it may interfere with future actions.
