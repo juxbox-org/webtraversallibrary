@@ -278,12 +278,12 @@ class JavascriptWrapper:
         """Removes all highlights created by :func:`highlight`."""
         self.execute_file(Path("clear_highlights.js"), viewport)
 
-    def click_element(self, selector: Selector):
+    def click_element(self, selector: Selector, wtl_uid: int):
         """
         Clicks an element found by the given selector.
         Note: If more elements can be found, only one will be clicked.
         """
-        self.execute_file([Path("dom.js"), Path("click_element.js")], selector.css)
+        self.execute_file([Path("dom.js"), Path("click_element.js")], selector.css, wtl_uid)
 
     def delete_element(self, selector: Selector):
         """

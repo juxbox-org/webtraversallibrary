@@ -181,7 +181,7 @@ class Click(ElementAction):
 
     def execute(self, workflow):
         with workflow.frame(self.selector.iframe):
-            workflow.js.click_element(self.selector)
+            workflow.js.click_element(self.selector, self.target.wtl_uid)
 
 
 @dataclass(frozen=True)

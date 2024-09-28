@@ -18,9 +18,30 @@
 // Requires dom.js
 
 let selector = arguments[0];
+
+let wtlUid = null;
+if (arguments.length > 1) {
+  wtlUid = arguments[1];
+}
+
 let element = document.querySelector(selector);
 if (element !== null) {
-    clickElement(element);
+  clickElement(element);
 } else {
-    console.error('Element not found with selector: ', selector);
+  console.error('click_element: Element not found with selector: ', selector);
+
+  if (wtlUid === null) {
+      return;
+  }
+
+  // Try clicking the element by its wtl-uid. Sometimes the element is not found by
+  // selector due to discrepancies in the DOM vs the scraped snapshot
+  console.log('click_element: Trying to find element by wtl-uid: ', wtlUid);
+  element = findElementByWtlUid(wtlUid);
+
+  if (element !== null) {
+    clickElement(element);
+  } else {
+    console.error('click_element: Element not found with wtl-uid: ', wtlUid);
+  }
 }

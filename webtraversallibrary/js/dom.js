@@ -557,6 +557,13 @@ const eventMap = {
     event.target.removeEventListener("blur", fireChangeEvent);
   }
 
+  function findElementByWtlUid(id) {
+    // Use querySelector to find the element with the specified wtl-uid attribute
+    const selector = `[wtl-uid="${id}"]`;
+    const element = document.querySelector(selector);
+    return element;
+  }
+
  /* jshint -W034 */
 
 
