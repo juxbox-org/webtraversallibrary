@@ -45,13 +45,28 @@ function highlight(tag, color, intensity, canvas, fill, onViewport) {
   ctx.globalAlpha = 1.0;
 }
 
-const [selector, color, intensity, fill, onViewport] = arguments;
+const [selector, wtlUid, color, intensity, fill, onViewport] = arguments;
 const canvas_selector = onViewport ? 'canvas#webtraversallibrary-viewport' : 'canvas#webtraversallibrary-page';
 let canvas = document.querySelector(canvas_selector);
 
 let element = document.querySelector(selector);
 if (element !== null) {
-    highlight(element, color, intensity, canvas, fill, onViewport);
+  highlight(element, color, intensity, canvas, fill, onViewport);
 } else {
-    console.error('Element not found with selector: ', selector);
+  console.error('highlight: Element not found with selector: ', selector);
+
+  if (wtlUid === null) {
+      return;
+  }
+
+  // Try clicking the element by its wtl-uid. Sometimes the element is not found by
+  // selector due to discrepancies in the DOM vs the scraped snapshot
+  console.log('highlight: Trying to find element by wtl-uid: ', wtlUid);
+  element = findElementByWtlUid(wtlUid);
+
+  if (element !== null) {
+    clickElement(element);
+  } else {
+    console.error('highlight: Element not found with wtl-uid: ', wtlUid);
+  }
 }

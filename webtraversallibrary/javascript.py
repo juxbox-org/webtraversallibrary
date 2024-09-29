@@ -264,7 +264,7 @@ class JavascriptWrapper:
             viewport,
         )
 
-    def highlight(self, selector: Selector, color: Color, fill: bool = False, viewport: bool = False):
+    def highlight(self, selector: Selector, wtl_uid: int, color: Color, fill: bool = False, viewport: bool = False):
         """
         Highlight an element as found by a given selector with arbitrary
         color and intensity.
@@ -272,7 +272,7 @@ class JavascriptWrapper:
         Shares an HTML canvas with `annotate`.
         """
         self.make_canvas()
-        self.execute_file(Path("highlight.js"), selector.css, color.to_str(), color.a / 255, fill, viewport)
+        self.execute_file(Path("highlight.js"), selector.css, wtl_uid, color.to_str(), color.a / 255, fill, viewport)
 
     def clear_highlights(self, viewport: bool = False):
         """Removes all highlights created by :func:`highlight`."""
