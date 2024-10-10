@@ -259,14 +259,20 @@ class SelectFramework(ElementAction):
                         targetEl = optionEl
 
             if targetEl:
-                targetEl.click()
+                # TODO: We should set the "selected" attribute to search for when creating the action
+                # since aria-selected may not always be the attribute that is used
+                selectedValue = targetEl.get_attribute("aria-selected")
+                if selectedValue != "true":
+                    targetEl.click()
 
             """
             Click somewhere else on the page to ensure the dropdown gets closed;
             otherwise, it may interfere with future actions.
             """
-            bodyEl = workflow.driver.find_element(By.TAG_NAME, 'body')
-            bodyEl.click()
+            #bodyEl = workflow.driver.find_element(By.TAG_NAME, 'body')
+            #bodyEl.click()
+            dummyEl = workflow.driver.find_element(By.ID, "dummy-element")
+            dummyEl.click()
 
 
 @dataclass(frozen=True)

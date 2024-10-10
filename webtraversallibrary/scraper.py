@@ -137,6 +137,22 @@ class Scraper:
             self.js.disable_animations()
         self.wait_until_loaded()
 
+        """
+        Add a dummy element to the page in case we need to do a NOP click
+        """
+        self.driver.execute_script("""
+            var dummyElement = document.createElement('div');
+            dummyElement.id = 'dummy-element';
+            dummyElement.style.position = 'absolute';
+            dummyElement.style.right = '0px';
+            dummyElement.style.bottom = '0px';
+            dummyElement.style.width = '1px';
+            dummyElement.style.height = '1px';
+            dummyElement.style.opacity = '1';
+            dummyElement.style.zIndex = '999999';
+            document.body.appendChild(dummyElement);
+        """)
+
     def wait_until_loaded(self, timeout: int = None):
         """
         Waits on the webdriver instance to finish loading a page before returning.
